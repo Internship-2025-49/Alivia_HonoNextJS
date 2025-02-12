@@ -1,7 +1,13 @@
 //import hono
 
 import { Hono } from "hono";
-import { createPost, getPosts } from "../contollers/PostController.js";
+import {
+  createPost,
+  deletePost,
+  getPostById,
+  getPosts,
+  updatePost,
+} from "../contollers/PostController.js";
 
 //import controller
 
@@ -9,8 +15,18 @@ import { createPost, getPosts } from "../contollers/PostController.js";
 const router = new Hono();
 
 //routes posts index
-router.get("/", (c) => getPosts(c));
+router.get("/data", (c) => getPosts(c));
 
 //routes posts create
-router.post("/", (c) => createPost(c));
+router.post("/data", (c) => createPost(c));
+
+//routes posts detail
+router.get("/data/:id", (c) => getPostById(c));
+
+//route post update
+router.patch("/data/:id", (c) => updatePost(c));
+
+//route post delete
+router.delete("/data/:id", (c) => deletePost(c));
+
 export const Routes = router;

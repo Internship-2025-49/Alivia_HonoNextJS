@@ -1,6 +1,9 @@
-//import hono
-
 import { Hono } from "hono";
+import { basicAuth } from "hono/basic-auth";
+import { jwt } from "hono/jwt";
+import type { JwtVariables } from "hono/jwt";
+import prisma from "../../prisma/client/index.js";
+import { apiKeyAuth } from "../middleware/auth.js";
 import {
   createPost,
   deletePost,
@@ -9,11 +12,42 @@ import {
   updatePost,
 } from "../contollers/PostController.js";
 
-//import controller
+type Variables = JwtVariables;
 
-//inistialize router
-const router = new Hono();
+const router = new Hono<{ Variables: Variables }>();
 
+router.use(
+  "/*",
+  jwt({
+    secret: "48f84dfac82c919e3c12935abeb85e294c69cb5af75fe9ae9399c1ba65795b56",
+  })
+);
+
+router.use(
+  "/auth/*",
+  basicAuth({
+    username: "hono",
+    password: "honojelek",
+  })
+);
+
+router.get("/key", async (c) => {
+  const auth = await prisma.auth.findFirst();
+
+  if (auth) {
+    return c.json({
+      statusCode: 200,
+      message: "Authorized",
+      key: auth.key,
+    });
+  }
+});
+
+router.use("*", apiKeyAuth);
+
+router.get("/auth/page", (c) => {
+  return c.text("You are authorized");
+});
 //routes posts index
 router.get("/data", (c) => getPosts(c));
 

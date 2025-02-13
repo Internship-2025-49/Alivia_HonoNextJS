@@ -11,11 +11,13 @@ import {
   getPosts,
   updatePost,
 } from "../contollers/PostController.js";
+import { bearerAuth } from "hono/bearer-auth";
 
 type Variables = JwtVariables;
 
 const router = new Hono<{ Variables: Variables }>();
 
+//jwt auth
 // router.use(
 //   "/*",
 //   jwt({
@@ -23,27 +25,33 @@ const router = new Hono<{ Variables: Variables }>();
 //   })
 // );
 
-// router.use(
-//   "/auth/*",
-//   basicAuth({
-//     username: "hono",
-//     password: "honojelek",
-//   })
-// );
+//basic auth
+router.use(
+  "/auth/*",
+  basicAuth({
+    username: "hono",
+    password: "honojelek",
+  })
+);
 
-// router.get("/key", async (c) => {
-//   const auth = await prisma.auth.findFirst();
+//bearer auth
+// const token = "shitaUcul";
 
-//   if (auth) {
-//     return c.json({
-//       statusCode: 200,
-//       message: "Authorized",
-//       key: auth.key,
-//     });
-//   }
-// });
+// router.use("/api/*", bearerAuth({ token }));
 
-// router.use("*", apiKeyAuth);
+router.get("/key", async (c) => {
+  const auth = await prisma.auth.findFirst();
+
+  if (auth) {
+    return c.json({
+      statusCode: 200,
+      message: "Authorized",
+      key: auth.key,
+    });
+  }
+});
+
+router.use("*", apiKeyAuth);
 
 router.get("/auth/page", (c) => {
   return c.text("You are authorized");

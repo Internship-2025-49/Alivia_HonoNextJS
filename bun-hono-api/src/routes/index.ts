@@ -1,7 +1,9 @@
 import { Hono } from "hono";
 import { basicAuth } from "hono/basic-auth";
+import { cors } from "hono/cors";
 import { jwt } from "hono/jwt";
 import type { JwtVariables } from "hono/jwt";
+import jsonwebtoken from "jsonwebtoken";
 import prisma from "../../prisma/client/index.js";
 import { apiKeyAuth } from "../middleware/auth.js";
 import {
@@ -13,62 +15,126 @@ import {
 } from "../contollers/PostController.js";
 import { bearerAuth } from "hono/bearer-auth";
 
-type Variables = JwtVariables;
-
-const router = new Hono<{ Variables: Variables }>();
-
-//jwt auth
-// router.use(
-//   "/*",
-//   jwt({
-//     secret: "48f84dfac82c919e3c12935abeb85e294c69cb5af75fe9ae9399c1ba65795b56",
-//   })
-// );
+export const app = new Hono<{ Variables: JwtVariables }>();
 
 //basic auth
-router.use(
-  "/auth/*",
+app.use(
+  "/basic/*",
   basicAuth({
     username: "hono",
-    password: "honojelek",
+    password: "hono123",
   })
 );
 
-//bearer auth
-// const token = "shitaUcul";
-
-// router.use("/api/*", bearerAuth({ token }));
-
-router.get("/key", async (c) => {
-  const auth = await prisma.auth.findFirst();
-
-  if (auth) {
-    return c.json({
-      statusCode: 200,
-      message: "Authorized",
-      key: auth.key,
-    });
-  }
-});
-
-router.use("*", apiKeyAuth);
-
-router.get("/auth/page", (c) => {
+app.get("/basic/page", (c) => {
   return c.text("You are authorized");
 });
+
+app.delete("/basic/delete/page", (c) => {
+  return c.text("Page deleted");
+});
+
+// bearer
+const token = "honoalivia";
+app.use("/bearer/*", bearerAuth({ token }));
+
+app.get("/bearer/page", (c) => {
+  return c.json({ message: "Read post!" });
+});
+
+app.post("/bearer/create/page", (c) => {
+  return c.json({ message: "Created post!" }, 201);
+});
+
+// //jwt
+const secretKey = "secret";
+
+app.post("/jwt/generate", async (c) => {
+  const payload = {
+    sub: "1234567890",
+    name: "lipia",
+    iat: Math.floor(Date.now() / 1000),
+  };
+
+  const token = jsonwebtoken.sign(payload, secretKey, { expiresIn: "1h" });
+
+  return c.json({ token });
+});
+
+app.use("/jwt/*", jwt({ secret: secretKey }));
+
+app.get("/jwt/page", (c) => {
+  const payload = c.get("jwtPayload");
+  return c.json({ message: "Token valid!", payload });
+});
+
+// //cors//
+app.use("/api/*", cors());
+app.use(
+  "/api2/*",
+  cors({
+    origin: "http://localhost:3000",
+    allowHeaders: ["X-Custom-Header", "Upgrade-Insecure-Requests"],
+    allowMethods: ["POST", "GET", "OPTIONS"],
+    exposeHeaders: ["Content-Length", "X-Kuma-Revision"],
+    maxAge: 600,
+    credentials: true,
+  })
+);
+
+app.all("/api/abc", (c) => {
+  return c.json({ success: true });
+});
+app.all("/api2/abc", (c) => {
+  return c.json({ success: true });
+});
+
+//batas
+
+app.use("*", apiKeyAuth);
 //routes posts index
-router.get("/data", (c) => getPosts(c));
+app.get("/data", (c) => getPosts(c));
+
+app.get("/basic/data", (c) => getPosts(c));
+
+app.get("/bearer/data", (c) => getPosts(c));
+
+app.get("/jwt/data", (c) => getPosts(c));
 
 //routes posts create
-router.post("/data", (c) => createPost(c));
+app.post("/data", (c) => createPost(c));
+
+app.get("/basic/data", (c) => createPost(c));
+
+app.get("/bearer/data", (c) => createPost(c));
+
+app.get("/jwt/data", (c) => createPost(c));
 
 //routes posts detail
-router.get("/data/:id", (c) => getPostById(c));
+app.get("/basic/data/:id", (c) => getPostById(c));
+
+app.get("/bearer/data/:id", (c) => getPostById(c));
+
+app.get("/jwt/data/:id", (c) => getPostById(c));
+
+app.get("/data/:id", (c) => getPostById(c));
 
 //route post update
-router.put("/data/:id", (c) => updatePost(c));
+app.put("/basic/data/:id", (c) => updatePost(c));
+
+app.put("/bearer/data/:id", (c) => updatePost(c));
+
+app.put("/jwt/data/:id", (c) => updatePost(c));
+
+app.put("/data/:id", (c) => updatePost(c));
 
 //route post delete
-router.delete("/data/:id", (c) => deletePost(c));
+app.delete("/data/:id", (c) => deletePost(c));
 
-export const Routes = router;
+app.delete("/basic/data/:id", (c) => deletePost(c));
+
+app.delete("/bearer/data/:id", (c) => deletePost(c));
+
+app.delete("/jwt/data/:id", (c) => deletePost(c));
+
+export const Routes = app;

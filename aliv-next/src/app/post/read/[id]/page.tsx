@@ -14,7 +14,10 @@ export default function Detail({
     data: user,
     isLoading,
     error,
-  } = useSWR(`/utils/queries/users/${resolvedParams.id}`, fetcher);
+  } = useSWR(`/utils/queries/users/${resolvedParams.id}`, fetcher, {
+    revalidateOnFocus: true,
+    refreshInterval: 100,
+  });
 
   if (isLoading)
     return (

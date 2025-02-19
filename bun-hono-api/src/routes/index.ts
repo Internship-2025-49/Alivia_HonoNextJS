@@ -14,8 +14,11 @@ import {
   updatePost,
 } from "../contollers/PostController.js";
 import { bearerAuth } from "hono/bearer-auth";
+import { loginUser } from "../contollers/AuthController.js";
 
 export const app = new Hono<{ Variables: JwtVariables }>();
+
+app.post("/login", loginUser);
 
 //basic auth
 app.use(
@@ -25,6 +28,22 @@ app.use(
     password: "hono123",
   })
 );
+
+// Routes untuk posts
+app.get("/post", getPosts);
+app.post("/post/create", createPost);
+
+app.get("/", async (c) => {
+  const auth = await prisma.auth.findFirst();
+
+  if (auth) {
+    return c.json({
+      statusCode: 200,
+      message: "Authorized",
+      key: auth.key,
+    });
+  }
+});
 
 app.get("/basic/page", (c) => {
   return c.text("You are authorized");

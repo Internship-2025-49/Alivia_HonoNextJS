@@ -1,43 +1,44 @@
-//import context
-
 import type { Context } from "hono";
 import prisma from "../../prisma/client/index.js";
-
-//import prisma client
 
 /**
  * Getting all posts
  */
 export const getPosts = async (c: Context) => {
   try {
-    //get all posts
-    const posts = await prisma.post.findMany({ orderBy: { id: "desc" } });
+    // Get all posts
+    const data = await prisma.post.findMany({ orderBy: { id: "desc" } });
 
-    //return JSON
-    return c.json(posts);
+    // Return JSON
+    return c.json(data);
   } catch (e: unknown) {
     console.error(`Error getting posts: ${e}`);
+    return c.text("Error getting posts", 500);
   }
 };
 
 export async function createPost(c: Context) {
   try {
-    //get body request
-    const body = await c.req.parseBody();
+    // Get body request (JSON)
+    const body = await c.req.json();
 
-    //check if title and content is string
-    const title = typeof body["title"] === "string" ? body["title"] : "";
-    const content = typeof body["content"] === "string" ? body["content"] : "";
+    // Validasi apakah setiap field bertipe string
+    const username = typeof body.username === "string" ? body.username : "";
+    const name = typeof body.name === "string" ? body.name : "";
+    const address = typeof body.address === "string" ? body.address : "";
+    const phone = typeof body.phone === "string" ? body.phone : "";
 
-    //create post
+    // Buat data post
     const post = await prisma.post.create({
       data: {
-        title: title,
-        content: content,
+        username,
+        name,
+        address,
+        phone,
       },
     });
 
-    //return JSON
+    // Return JSON response
     return c.json(
       {
         success: true,
@@ -48,22 +49,23 @@ export async function createPost(c: Context) {
     );
   } catch (e: unknown) {
     console.error(`Error creating post: ${e}`);
+    return c.text("Error creating post", 500);
   }
 }
 
 export async function getPostById(c: Context) {
   try {
-    // Konversi tipe id menjadi number
+    // Convert id to number
     const postId = parseInt(c.req.param("id"));
 
-    //get post by id
+    // Get post by id
     const post = await prisma.post.findUnique({
       where: { id: postId },
     });
 
-    //if post not found
+    // If post not found
     if (!post) {
-      //return JSON
+      // Return JSON
       return c.json(
         {
           success: false,
@@ -73,7 +75,7 @@ export async function getPostById(c: Context) {
       );
     }
 
-    //return JSON
+    // Return JSON
     return c.json(
       {
         success: true,
@@ -84,6 +86,7 @@ export async function getPostById(c: Context) {
     );
   } catch (e: unknown) {
     console.error(`Error finding post: ${e}`);
+    return c.text("Error finding post", 500);
   }
 }
 
@@ -92,27 +95,31 @@ export async function getPostById(c: Context) {
  */
 export async function updatePost(c: Context) {
   try {
-    // Konversi tipe id menjadi number
+    // Convert id to number
     const postId = parseInt(c.req.param("id"));
 
-    //get body request
-    const body = await c.req.parseBody();
+    // Get body request
+    const body = await c.req.json();
 
-    //check if title and content is string
-    const title = typeof body["title"] === "string" ? body["title"] : "";
-    const content = typeof body["content"] === "string" ? body["content"] : "";
+    // Check if title and content is string
+    const username =
+      typeof body["username"] === "string" ? body["username"] : "";
+    const name = typeof body["name"] === "string" ? body["name"] : "";
+    const address = typeof body["address"] === "string" ? body["address"] : "";
+    const phone = typeof body["phone"] === "string" ? body["phone"] : "";
 
-    //update post with prisma
+    // Update post with prisma
     const post = await prisma.post.update({
       where: { id: postId },
       data: {
-        title: title,
-        content: content,
-        updatedAt: new Date(),
+        username: username,
+        name: name,
+        address: address,
+        phone: phone,
       },
     });
 
-    //return JSON
+    // Return JSON
     return c.json(
       {
         success: true,
@@ -123,6 +130,7 @@ export async function updatePost(c: Context) {
     );
   } catch (e: unknown) {
     console.error(`Error updating post: ${e}`);
+    return c.text("Error updating post", 500);
   }
 }
 
@@ -131,15 +139,15 @@ export async function updatePost(c: Context) {
  */
 export async function deletePost(c: Context) {
   try {
-    // Konversi tipe id menjadi number
+    // Convert id to number
     const postId = parseInt(c.req.param("id"));
 
-    //delete post with prisma
+    // Delete post with prisma
     await prisma.post.delete({
       where: { id: postId },
     });
 
-    //return JSON
+    // Return JSON
     return c.json(
       {
         success: true,
@@ -149,5 +157,6 @@ export async function deletePost(c: Context) {
     );
   } catch (e: unknown) {
     console.error(`Error deleting post: ${e}`);
+    return c.text("Error deleting post", 500);
   }
 }

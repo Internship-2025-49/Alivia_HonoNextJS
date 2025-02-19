@@ -33,21 +33,3 @@ export const PUT = handle(app);
 export const DELETE = handle(app);
 
 export default app;
-
-// app.all("/abc", (c) => {
-//   return c.json({ success: "okeee" });
-// });
-
-// app.route("/posts", Routes);
-
-// app.get("/", (c) => {
-//   return c.text("hono jelekkk!");
-// });
-
-// const port = 3000;
-// console.log(`Server is running on http://localhost:${port}`);
-
-// serve({
-//   fetch: app.fetch,
-//   port,
-// });

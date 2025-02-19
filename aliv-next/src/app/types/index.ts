@@ -1,23 +1,27 @@
-// export interface UserModel {
-//   id: number;
-//   name: string;
-// }
+export interface UserModel {
+  deleteUser(id: number): void;
+  id: number;
+  phone: string;
+  address: string;
+  username: string;
+  name: string;
+}
 
-// export interface PostModel {
-//   id: number;
-//   title: string;
-//   keyword: string;
-//   des: string;
-//   slug: string;
-//   imaqe: string;
-//   publish: number;
-//   content: string;
-//   created_at: string;
-//   user: UserModel;
-//   deletePost: (id: number) => void;
-// }
+export interface PostModel {
+  id: number;
+  phone: string;
+  address: string;
+  username: string;
+  name: string;
+  user: UserModel;
+  deletePost: (id: number) => void;
+}
 
-// export interface PostAddModel {
-//   id: number;
-//   name: string;
-// }
+export interface PostAddModel {
+  id: number;
+  phone: string;
+  address: string;
+  username: string;
+  name: string;
+  user: UserModel;
+}

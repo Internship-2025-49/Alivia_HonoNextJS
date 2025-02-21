@@ -2,7 +2,8 @@
   "name": "bun-hono-api",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "test": "jest"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.8",
@@ -17,7 +18,9 @@
     "@types/jsonwebtoken": "^9.0.8",
     "@types/node": "^20.11.17",
     "drizzle-kit": "^0.30.4",
+    "jest": "^29.7.0",
     "prisma": "^5.13.0",
+    "ts-jest": "^29.2.5",
     "tsx": "^4.19.2"
   }
 }

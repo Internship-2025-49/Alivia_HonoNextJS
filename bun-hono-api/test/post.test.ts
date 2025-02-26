@@ -23,7 +23,7 @@ describe("getPosts test", () => {
   });
 
   test("getUserById test", async () => {
-    const postId = 39;
+    const postId = 171;
     const getPostByIdTest = {
       req: {
         param: jest.fn().mockReturnValue(postId.toString()),
@@ -49,6 +49,7 @@ describe("getPosts test", () => {
     );
   });
 });
+
 describe("createPost test", () => {
   test("createPost insert all", async () => {
     const createTest = {
@@ -213,9 +214,18 @@ describe("createPost test", () => {
 
 describe("updatePost describe", () => {
   test("updatePost update all", async () => {
+    const firstData = await prisma.post.findMany({
+      orderBy: { id: "asc" },
+      take: 5, // Ambil lima data pertama
+    });
+
+    if (firstData.length < 2) {
+      throw new Error("Tidak cukup data post untuk diupdate.");
+    }
+
     const updateTest = {
       req: {
-        param: jest.fn(() => "21"),
+        param: jest.fn(() => firstData[0].id.toString()), // Gunakan ID urutan kedua
         json: jest.fn(() =>
           Promise.resolve({
             username: "update ALL",
@@ -249,9 +259,18 @@ describe("updatePost describe", () => {
   });
 
   test("updatePost update username only", async () => {
+    const secondData = await prisma.post.findMany({
+      orderBy: { id: "asc" },
+      take: 5, // Ambil lima data pertama
+    });
+
+    if (secondData.length < 2) {
+      throw new Error("Tidak cukup data post untuk diupdate.");
+    }
+
     const updateTest = {
       req: {
-        param: jest.fn(() => "22"),
+        param: jest.fn(() => secondData[1].id.toString()), // Gunakan ID urutan kedua
         json: jest.fn(() =>
           Promise.resolve({
             username: "update only username",
@@ -278,9 +297,17 @@ describe("updatePost describe", () => {
   });
 
   test("updatePost update name only", async () => {
+    const thirdData = await prisma.post.findMany({
+      orderBy: { id: "asc" },
+      take: 5, // Ambil lima data pertama
+    });
+
+    if (thirdData.length < 2) {
+      throw new Error("Tidak cukup data post untuk diupdate.");
+    }
     const updateTest = {
       req: {
-        param: jest.fn(() => "25"),
+        param: jest.fn(() => thirdData[2].id.toString()), // Gunakan ID urutan kedua
         json: jest.fn(() =>
           Promise.resolve({
             name: "update name only",
@@ -307,9 +334,26 @@ describe("updatePost describe", () => {
   });
 
   test("updatePost update address only", async () => {
+    const fourthdData = await prisma.post.findMany({
+      orderBy: { id: "asc" },
+      take: 5, // Ambil lima data pertama
+    });
+
+    if (fourthdData.length < 2) {
+      throw new Error("Tidak cukup data post untuk diupdate.");
+    }
+
+    // const lastData = await prisma.post.findFirst({
+    //   orderBy: { id: "desc" },
+    // });
+
+    // if (!lastData) {
+    //   throw new Error("Tidak ada data post untuk diupdate.");
+    // }
+
     const updateTest = {
       req: {
-        param: jest.fn(() => "33"),
+        param: jest.fn(() => fourthdData[3].id.toString()), // Gunakan ID urutan kedua
         json: jest.fn(() =>
           Promise.resolve({
             address: "update address only",
@@ -336,9 +380,18 @@ describe("updatePost describe", () => {
   });
 
   test("updatePost update phone only", async () => {
+    const fivedData = await prisma.post.findMany({
+      orderBy: { id: "asc" },
+      take: 5, // Ambil lima data pertama
+    });
+
+    if (fivedData.length < 2) {
+      throw new Error("Tidak cukup data post untuk diupdate.");
+    }
+
     const updateTest = {
       req: {
-        param: jest.fn(() => "37"),
+        param: jest.fn(() => fivedData[4].id.toString()), // Gunakan ID urutan kedua
         json: jest.fn(() =>
           Promise.resolve({
             phone: "1234567890 update phone only",
@@ -366,23 +419,36 @@ describe("updatePost describe", () => {
 });
 
 describe("deletePost test", () => {
-  test("deletePost id exist", async () => {
-    const userId = 145;
-    const deleteTest = {
-      req: {
-        param: jest.fn().mockReturnValue(userId),
-      },
-      json: jest.fn(),
-    } as unknown as Context;
+  test("deletePost multiple ids exist", async () => {
+    // Ambil 5 ID terakhir dari database
+    const lastFivePosts = await prisma.post.findMany({
+      orderBy: { id: "desc" },
+      take: 5,
+      select: { id: true },
+    });
 
-    await deletePost(deleteTest);
+    if (lastFivePosts.length < 5) {
+      throw new Error("Tidak cukup data post untuk dihapus.");
+    }
 
-    expect(deleteTest.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: "Post Deleted Successfully!",
-        success: true,
-      }),
-      200
-    );
+    // Loop setiap ID untuk dihapus
+    for (const post of lastFivePosts) {
+      const deleteTest = {
+        req: {
+          param: jest.fn().mockReturnValue(post.id.toString()),
+        },
+        json: jest.fn(),
+      } as unknown as Context;
+
+      await deletePost(deleteTest);
+
+      expect(deleteTest.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "Post Deleted Successfully!",
+          success: true,
+        }),
+        200
+      );
+    }
   });
 });

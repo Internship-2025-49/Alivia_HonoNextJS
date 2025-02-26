@@ -49,7 +49,6 @@ describe("getPosts test", () => {
     );
   });
 });
-
 describe("createPost test", () => {
   test("createPost insert all", async () => {
     const createTest = {

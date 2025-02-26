@@ -1,5 +1,5 @@
 import type { Context } from "hono";
-import prisma from "../../prisma/client/index.js";
+import prisma from "../../prisma/client/index";
 
 /**
  * Getting all posts
@@ -63,13 +63,15 @@ export async function getPostById(c: Context) {
       where: { id: postId },
     });
 
+    c;
+
     // If post not found
     if (!post) {
       // Return JSON
       return c.json(
         {
           success: false,
-          message: "Post Not Found!",
+          message: "ID Post Not Found!",
         },
         404
       );
@@ -130,7 +132,7 @@ export async function updatePost(c: Context) {
     );
   } catch (e: unknown) {
     console.error(`Error updating post: ${e}`);
-    return c.text("Error updating post", 500);
+    return c.json({ message: "Error updating post" }, 500);
   }
 }
 

@@ -12,9 +12,9 @@ import {
   getPostById,
   getPosts,
   updatePost,
-} from "../contollers/PostController.js";
+} from "../controllers/PostController.js";
 import { bearerAuth } from "hono/bearer-auth";
-import { loginUser } from "../contollers/AuthController.js";
+import { loginUser } from "../controllers/AuthController.js";
 
 export const app = new Hono<{ Variables: JwtVariables }>();
 

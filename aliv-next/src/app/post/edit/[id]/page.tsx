@@ -57,7 +57,7 @@ export default function PostEdit({
       });
 
       const content = await res.json();
-      if (content.data) {
+      if (content) {
         Swal.fire({
           icon: "success",
           title: "Berhasil!",

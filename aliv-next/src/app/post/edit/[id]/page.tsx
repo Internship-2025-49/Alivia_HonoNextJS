@@ -4,6 +4,7 @@ import React, { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { fetcher } from "@/app/libs";
 import useSWR from "swr";
+import Swal from "sweetalert2";
 
 export default function PostEdit({
   params,
@@ -34,9 +35,21 @@ export default function PostEdit({
 
   const updateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (username !== "" && name !== "" && address !== "" && phone !== "") {
-      const formData = { username, name, address, phone };
+    // Memeriksa apakah semua field telah terisi
+    if (username === "" || name === "" || address === "" || phone === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Semua formulir harus diisi!",
+        confirmButtonColor: "#d33",
+        width: "300px",
+      });
+      return;
+    }
 
+    const formData = { username, name, address, phone };
+
+    try {
       const res = await fetch(`/utils/queries/users/${resolvedParams.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -44,9 +57,22 @@ export default function PostEdit({
       });
 
       const content = await res.json();
-      if (content.success > 0) {
-        router.push("/post");
+      if (content.data) {
+        Swal.fire({
+          icon: "success",
+          title: "Berhasil!",
+          text: "Data berhasil diperbaharui!",
+          confirmButtonColor: "#4CAF50",
+          width: "300px",
+        }).then(() => {
+          router.push("/post");
+        });
+      } else {
+        alert("Terjadi kesalahan saat memperbarui data");
       }
+    } catch (error) {
+      console.error("Error updating user:", error);
+      alert("Terjadi kesalahan saat memperbarui data");
     }
   };
 
@@ -55,52 +81,60 @@ export default function PostEdit({
   if (!user) return <div>Error page.</div>;
 
   return (
-    <div className="w-full max-w-7xl m-auto">
-      <form className="w-full" onSubmit={updateUser}>
-        <span className="font-bold text-yellow-500 py-2 block underline text-2xl">
-          Edit User
-        </span>
-        <div className="w-full py-2">
-          <label className="text-sm font-bold py-2 block">Username</label>
+    <div className="w-full max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6">
+      <h2 className="text-3xl font-bold text-yellow-500 text-center mb-6">
+        Edit User ✏️
+      </h2>
+      <form className="space-y-4" onSubmit={updateUser}>
+        <div>
+          <label className="text-sm font-semibold block text-gray-700 mb-1">
+            Username
+          </label>
           <input
             type="text"
             name="username"
-            className="w-full border-[1px] border-gray-200 p-2 rounded-sm text-black"
+            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
-        <div className="w-full py-2">
-          <label className="text-sm font-bold py-2 block">Name</label>
+        <div>
+          <label className="text-sm font-semibold block text-gray-700 mb-1">
+            Name
+          </label>
           <input
             type="text"
             name="name"
-            className="w-full border-[1px] border-gray-200 p-2 rounded-sm text-black"
+            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-        <div className="w-full py-2">
-          <label className="text-sm font-bold py-2 block">Address</label>
+        <div>
+          <label className="text-sm font-semibold block text-gray-700 mb-1">
+            Address
+          </label>
           <textarea
             name="address"
-            className="w-full border-[1px] border-gray-200 p-2 rounded-sm text-black"
+            className="w-full border border-gray-300 p-3 rounded-lg resize-none h-24 focus:outline-none focus:ring-2 focus:ring-yellow-400"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
           />
         </div>
-        <div className="w-full py-2">
-          <label className="text-sm font-bold py-2 block">Phone</label>
+        <div>
+          <label className="text-sm font-semibold block text-gray-700 mb-1">
+            Phone
+          </label>
           <input
             type="text"
             name="phone"
-            className="w-full border-[1px] border-gray-200 p-2 rounded-sm text-black"
+            className="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
           />
         </div>
-        <div className="w-full py-2">
-          <button className="w-20 p-2 text-white border-gray-200 border-[1px] rounded-sm bg-green-400">
+        <div className="text-center">
+          <button className="w-full py-3 text-white font-semibold rounded-lg bg-yellow-500 hover:bg-yellow-600 transition duration-300">
             Update
           </button>
         </div>

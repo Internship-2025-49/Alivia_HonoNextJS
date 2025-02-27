@@ -92,6 +92,7 @@ import { fetcher } from "../libs";
 import { UserModel } from "../types/index";
 import Link from "next/link";
 import User from "../components/post";
+import Swal from "sweetalert2";
 
 export default function Users() {
   const [users, setUsers] = useState<UserModel[]>([]);
@@ -119,18 +120,54 @@ export default function Users() {
   if (!data) return <div>Loading...</div>;
 
   const delete_User: UserModel["deleteUser"] = async (id: number) => {
-    const res = await fetch(`/utils/queries/users/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
+    Swal.fire({
+      title: "Yakin ingin menghapus?",
+      text: "Data ini akan dihapus secara permanen!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Ya, hapus!",
+      cancelButtonText: "Batal",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await fetch(`/utils/queries/users/${id}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          const content = await res.json();
+
+          if (content.success > 0) {
+            setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+            Swal.fire({
+              title: "Terhapus!",
+              text: "Data berhasil dihapus.",
+              icon: "success",
+              confirmButtonColor: "#4CAF50",
+            });
+          } else {
+            Swal.fire({
+              title: "Gagal!",
+              text: "Terjadi kesalahan saat menghapus data.",
+              icon: "error",
+              confirmButtonColor: "#d33",
+            });
+          }
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (error) {
+          Swal.fire({
+            title: "Error!",
+            text: "Gagal menghapus data. Coba lagi nanti.",
+            icon: "error",
+            confirmButtonColor: "#d33",
+          });
+        }
+      }
     });
-
-    const content = await res.json();
-
-    if (content.success > 0) {
-      setUsers(users.filter((user: UserModel) => user.id !== id));
-    }
   };
 
   return (

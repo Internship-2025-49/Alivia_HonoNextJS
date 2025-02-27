@@ -14,10 +14,14 @@ export default function Detail({
     data: user,
     isLoading,
     error,
-  } = useSWR(`/utils/queries/users/${resolvedParams.id}`, fetcher, {
-    revalidateOnFocus: true,
-    refreshInterval: 100,
-  });
+  } = useSWR(
+    `/utils/queries/users/${resolvedParams.id}`,
+    fetcher
+    // {
+    // revalidateOnFocus: true,
+    // refreshInterval: 100,
+    // }
+  );
 
   if (isLoading)
     return (
@@ -41,6 +45,7 @@ export default function Detail({
   if (user) {
     console.log(user);
   }
+  console.log("dataUser : ", user);
 
   return (
     <div className="w-full">

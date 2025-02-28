@@ -58,10 +58,10 @@ export default function Post(params: UserModel) {
             Delete
           </Button>
           <Button className="px-3 py-1 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-all">
-            <Link href={`/post/edit/${params.id}`}>Edit</Link>
+            <Link href={`/post/${params.id}/edit`}>Edit</Link>
           </Button>
           <Button className="px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all">
-            <Link href={`/post/read/${params.id}`}>View</Link>
+            <Link href={`/post/${params.id}`}>View</Link>
           </Button>
         </div>
       </td>

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { PostAddModel } from "@/app/types";
 import { getApiKey, getAuthToken } from "@/app/utils/authHelpers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -21,7 +22,8 @@ export async function GET() {
   }
 }
 
-export async function POST(request: NextRequest) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function POST(request: NextRequest, userData: PostAddModel) {
   try {
     const token = await getAuthToken();
     const apiKey = await getApiKey(token);

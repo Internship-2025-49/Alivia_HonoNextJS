@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { PostAddModel } from "@/app/types";
 import { getApiKey, getAuthToken } from "@/app/utils/authHelpers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -29,7 +30,7 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: number } }
+  { params }: { params: { id: number }; userData: PostAddModel }
 ) {
   try {
     const token = await getAuthToken();
@@ -82,7 +83,7 @@ export async function DELETE(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: number } }
+  { params }: { params: { id: number }; userData: PostAddModel }
 ) {
   try {
     const token = await getAuthToken();

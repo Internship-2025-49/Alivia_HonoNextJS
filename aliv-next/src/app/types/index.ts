@@ -1,3 +1,5 @@
+import { userForm } from "../utils/type/userSchema";
+
 export interface UserModel {
   deleteUser(id: number): void;
   id: number;
@@ -23,5 +25,12 @@ export interface PostAddModel {
   address: string;
   username: string;
   name: string;
-  user: UserModel;
+  // user: UserModel;
+}
+
+export interface FormProps {
+  user?: userForm;
+  titleText: string;
+  buttonText: string;
+  required: boolean;
 }

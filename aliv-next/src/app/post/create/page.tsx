@@ -241,139 +241,159 @@
 // pas udah pake tanstack//
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// "use client";
+
+// import React, { useState } from "react";
+// import { useRouter } from "next/navigation";
+// import Swal from "sweetalert2";
+// import { useMutation } from "@tanstack/react-query";
+
+// export default function UserCreate() {
+//   const router = useRouter();
+//   const [formData, setFormData] = useState({
+//     username: "",
+//     name: "",
+//     address: "",
+//     phone: "",
+//   });
+
+// const mutation = useMutation({
+//   mutationFn: async (data: any) => {
+//     const response = await fetch("/utils/queries/users", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(data),
+//     });
+//     return response.json();
+//   },
+//   onSuccess: (content) => {
+//     if (content.success) {
+//       Swal.fire({
+//         icon: "success",
+//         title: "Berhasil!",
+//         text: "Data sudah berhasil dibuat!",
+//         confirmButtonColor: "#4CAF50",
+//         width: "300px",
+//       }).then(() => {
+//         router.push("/post");
+//       });
+//     } else {
+//       alert(content.message || "Terjadi kesalahan saat menyimpan data.");
+//     }
+//   },
+//   onError: () => {
+//     Swal.fire({
+//       icon: "error",
+//       title: "Error!",
+//       text: "Gagal menyimpan data. Coba lagi nanti.",
+//       confirmButtonColor: "#d33",
+//     });
+//   },
+// });
+
+//   const handleChange = (
+//     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+//   ) => {
+//     setFormData({ ...formData, [e.target.name]: e.target.value });
+//   };
+
+// const handleSubmit = (e: React.FormEvent) => {
+//   e.preventDefault();
+//   if (
+//     !formData.username ||
+//     !formData.name ||
+//     !formData.address ||
+//     !formData.phone
+//   ) {
+//     Swal.fire({
+//       icon: "error",
+//       title: "Oops...",
+//       text: "Semua formulir harus diisi!",
+//       confirmButtonColor: "#d33",
+//       width: "300px",
+//     });
+//     return;
+//   }
+//   mutation.mutate(formData);
+// };
+
+//   return (
+//     <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+//       <h2 className="text-2xl font-bold text-yellow-500 mb-6 text-center">
+//         Form Add
+//       </h2>
+//       <form className="space-y-4" onSubmit={handleSubmit}>
+//         <div>
+//           <label className="block text-sm font-semibold text-gray-700 mb-1">
+//             Username
+//           </label>
+//           <input
+//             type="text"
+//             name="username"
+//             className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+//             onChange={handleChange}
+//           />
+//         </div>
+//         <div>
+//           <label className="block text-sm font-semibold text-gray-700 mb-1">
+//             Name
+//           </label>
+//           <input
+//             type="text"
+//             name="name"
+//             className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+//             onChange={handleChange}
+//           />
+//         </div>
+//         <div>
+//           <label className="block text-sm font-semibold text-gray-700 mb-1">
+//             Address
+//           </label>
+//           <textarea
+//             name="address"
+//             className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+//             onChange={handleChange}
+//           />
+//         </div>
+//         <div>
+//           <label className="block text-sm font-semibold text-gray-700 mb-1">
+//             Phone
+//           </label>
+//           <input
+//             type="text"
+//             name="phone"
+//             className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+//             onChange={handleChange}
+//           />
+//         </div>
+//         <div className="flex justify-center">
+//           <button className="px-6 py-3 bg-green-500 text-white font-bold rounded-md hover:bg-green-600 transition">
+//             Submit
+//           </button>
+//         </div>
+//       </form>
+//     </div>
+//   );
+// }
+
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import Swal from "sweetalert2";
-import { useMutation } from "@tanstack/react-query";
+import FormUser from "@/app/components/FormUser";
+import React from "react";
 
 export default function UserCreate() {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    username: "",
-    name: "",
-    address: "",
-    phone: "",
-  });
-
-  const mutation = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await fetch("/utils/queries/users", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      return response.json();
-    },
-    onSuccess: (content) => {
-      if (content.success) {
-        Swal.fire({
-          icon: "success",
-          title: "Berhasil!",
-          text: "Data sudah berhasil dibuat!",
-          confirmButtonColor: "#4CAF50",
-          width: "300px",
-        }).then(() => {
-          router.push("/post");
-        });
-      } else {
-        alert(content.message || "Terjadi kesalahan saat menyimpan data.");
-      }
-    },
-    onError: () => {
-      Swal.fire({
-        icon: "error",
-        title: "Error!",
-        text: "Gagal menyimpan data. Coba lagi nanti.",
-        confirmButtonColor: "#d33",
-      });
-    },
-  });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (
-      !formData.username ||
-      !formData.name ||
-      !formData.address ||
-      !formData.phone
-    ) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Semua formulir harus diisi!",
-        confirmButtonColor: "#d33",
-        width: "300px",
-      });
-      return;
-    }
-    mutation.mutate(formData);
-  };
-
   return (
-    <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold text-yellow-500 mb-6 text-center">
-        Form Add
-      </h2>
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
-            Username
-          </label>
-          <input
-            type="text"
-            name="username"
-            className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
-            Name
-          </label>
-          <input
-            type="text"
-            name="name"
-            className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
-            Address
-          </label>
-          <textarea
-            name="address"
-            className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
-            Phone
-          </label>
-          <input
-            type="text"
-            name="phone"
-            className="w-full border border-gray-300 p-3 rounded-md focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-            onChange={handleChange}
-          />
-        </div>
-        <div className="flex justify-center">
-          <button className="px-6 py-3 bg-green-500 text-white font-bold rounded-md hover:bg-green-600 transition">
-            Submit
-          </button>
-        </div>
-      </form>
+    <div className="container w-full py-10">
+      <div className="flex justify-center">
+        {}
+        <FormUser
+          titleText="Add User"
+          buttonText="Submit"
+          required={true}
+        ></FormUser>
+      </div>
     </div>
   );
 }

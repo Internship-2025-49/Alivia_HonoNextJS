@@ -155,31 +155,56 @@ export const ViewPost = async ({ id }: { id: number }) => {
   }
 };
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: number } }
-) {
+export const DeletePost = async (id: number) => {
   try {
     const token = await getAuthToken();
     const apiKey = await getApiKey(token);
 
-    const res = await fetch(
-      `http://localhost:3000/api/posts/data/${params.id}`,
-      {
-        next: { revalidate: 10 },
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "api-key-alivia": apiKey,
-        },
-      }
-    );
-    const data = await res.json();
-    return NextResponse.json(data);
+    const res = await fetch(`http://localhost:3000/api/posts/data/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "api-key-alivia": apiKey,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Gagal menghapus post.");
+    }
+
+    return await res.json();
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    throw new Error(error.message);
   }
-}
+};
+
+// export async function DELETE(
+//   request: NextRequest,
+//   { params }: { params: { id: number } }
+// ) {
+//   try {
+//     const token = await getAuthToken();
+//     const apiKey = await getApiKey(token);
+
+//     const res = await fetch(
+//       `http://localhost:3000/api/posts/data/${params.id}`,
+//       {
+//         next: { revalidate: 10 },
+//         method: "DELETE",
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//           "api-key-alivia": apiKey,
+//         },
+//       }
+//     );
+//     const data = await res.json();
+//     return NextResponse.json(data);
+//   } catch (error: any) {
+//     return NextResponse.json({ error: error.message }, { status: 500 });
+//   }
+// }
 
 // export async function POST(
 //   request: NextRequest,

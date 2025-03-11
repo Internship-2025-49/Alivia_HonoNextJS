@@ -1,8 +1,30 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import * as mutations from "../../queries/users/[id]/route";
+import { GET } from "../../queries/users/route";
 import { userForm } from "../../type/userSchema";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
+
+export const useAllPost = () => {
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async () => {
+      try {
+        return await GET();
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      router.push("/post");
+    },
+    onError: (error) => {
+      console.error("Failed to fetch posts:", error);
+    },
+  });
+};
 
 export const useUpdatePost = () => {
   // const queryClient = useQueryClient();
@@ -121,6 +143,39 @@ export const useViewpost = (idUser: number) => {
       } catch (error) {
         console.log(error);
       }
+    },
+  });
+};
+
+export const useDeletepost = () => {
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async ({ id }: { id: number }) => {
+      try {
+        const result = await mutations.DeletePost(id);
+        return result;
+      } catch (error) {
+        console.error("Failed to delete post:", error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      Swal.fire({
+        icon: "success",
+        title: "Berhasil!",
+        text: "Post berhasil dihapus!",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      router.push("/post");
+    },
+    onError: (error) => {
+      Swal.fire({
+        icon: "error",
+        title: "Gagal!",
+        text: `Gagal menghapus post: ${error?.message || "Terjadi kesalahan"}`,
+      });
     },
   });
 };

@@ -521,53 +521,120 @@
 //   );
 // }
 
+// "use client";
+
+// import React from "react";
+// import { useRouter } from "next/navigation";
+// import { useQuery } from "@tanstack/react-query";
+// import UserForm from "@/app/components/FormUser";
+
+// export default function PostEdit({
+//   params,
+// }: {
+//   params: Promise<{ id: string }>;
+// }) {
+//   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+//   const router = useRouter();
+//   const [resolvedParams, setResolvedParams] = React.useState<{ id: string }>();
+
+//   // Resolve params async
+//   React.useEffect(() => {
+//     params.then(setResolvedParams);
+//   }, [params]);
+
+//   const id = resolvedParams?.id;
+
+//   const {
+//     data: user,
+//     isLoading,
+//     error,
+//   } = useQuery({
+//     queryKey: ["user", id],
+//     enabled: !!id, // BIAR KUERI JALAN PAS ID ADA
+//     queryFn: async () => {
+//       const res = await fetch(`/utils/queries/users/${id}`);
+//       if (!res.ok) throw new Error("Failed to fetch user");
+//       return res.json();
+//     },
+//   });
+
+//   if (isLoading) return <div>Loading...</div>;
+//   if (error) return <div>Error loading user data.</div>;
+//   if (!user?.data) return <div>Data user tidak ditemukan.</div>;
+
+//   return (
+//     <UserForm user={user.data} titleText="Edit User ✏️" buttonText="Update" />
+//   );
+// }
+
+// "use client";
+
+// import React, { use } from "react";
+// import { useViewpost } from "@/app/utils/hooks/post";
+// import UserForm from "@/app/components/FormUser";
+
+// export default function PostEdit({
+//   params,
+// }: {
+//   params: Promise<{ id: number }>;
+// }) {
+//   const { id: userId } = use(params);
+
+//   const getUserById = useViewpost(userId);
+
+//   const user = getUserById.data;
+
+//   if (!user) return <div>User not found.</div>;
+
+//   return (
+//     <div className="container w-full py-10">
+//       <div className="flex justify-center">
+//         <UserForm
+//           user={user.data}
+//           titleText="Edit User ✏️"
+//           buttonText="Update"
+//         />
+//       </div>
+//     </div>
+//   );
+// }
+
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
+import { useViewpost } from "@/app/utils/hooks/post";
 import UserForm from "@/app/components/FormUser";
 
 export default function PostEdit({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: number }>;
 }) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const router = useRouter();
-  const [resolvedParams, setResolvedParams] = React.useState<{ id: string }>();
+  const [userId, setUserId] = useState<number | null>(null);
 
-  // Resolve params async
-  React.useEffect(() => {
-    params.then(setResolvedParams);
+  useEffect(() => {
+    params.then((resolvedParams) => {
+      console.log("Params resolved:", resolvedParams); // 🔍 Cek isi params
+      setUserId(resolvedParams.id);
+    });
   }, [params]);
 
-  const id = resolvedParams?.id;
+  const getUserById = useViewpost(userId ?? 0); // Pastikan id ada sebelum fetch
 
-  const {
-    data: user,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["user", id],
-    enabled: !!id, // BIAR KUERI JALAN PAS ID ADA
-    queryFn: async () => {
-      const res = await fetch(`/utils/queries/users/${id}`);
-      if (!res.ok) throw new Error("Failed to fetch user");
-      return res.json();
-    },
-  });
+  const user = getUserById.data;
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading user data.</div>;
-  if (!user?.data) return <div>Data user tidak ditemukan.</div>;
+  if (!userId) return <div>Loading...</div>;
+  if (!user) return <div>User not found.</div>;
 
   return (
-    <UserForm
-      user={user.data}
-      titleText="Edit User ✏️"
-      buttonText="Update"
-      required={true}
-    />
+    <div className="container w-full py-10">
+      <div className="flex justify-center">
+        <UserForm
+          user={user.data}
+          titleText="Edit User ✏️"
+          buttonText="Update"
+        />
+      </div>
+    </div>
   );
 }

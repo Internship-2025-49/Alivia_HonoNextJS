@@ -388,11 +388,7 @@ export default function UserCreate() {
     <div className="container w-full py-10">
       <div className="flex justify-center">
         {}
-        <FormUser
-          titleText="Add User"
-          buttonText="Submit"
-          required={true}
-        ></FormUser>
+        <FormUser titleText="Add User" buttonText="Submit"></FormUser>
       </div>
     </div>
   );

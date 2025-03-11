@@ -19,18 +19,17 @@ export interface PostModel {
   deletePost: (id: number) => void;
 }
 
-export interface PostAddModel {
-  id: number;
-  phone: string;
-  address: string;
-  username: string;
-  name: string;
-  // user: UserModel;
-}
+// export interface PostAddModel {
+//   id: number;
+//   phone: string;
+//   address: string;
+//   username: string;
+//   name: string;
+//   // user: UserModel;
+// }
 
 export interface FormProps {
   user?: userForm;
   titleText: string;
   buttonText: string;
-  required: boolean;
 }
